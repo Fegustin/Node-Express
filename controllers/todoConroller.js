@@ -1,4 +1,4 @@
-import Todo from '../models/Todo.js'
+import Todo from '../models/TodoModel.js'
 
 export const goToTodos = async (req, res) => {
     const todos = await Todo.find({}).lean()

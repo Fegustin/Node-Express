@@ -5,6 +5,7 @@
         {{#each todos}}
             <li class="todo">
                 <form action="/complete" method="POST">
+                    <input type="hidden" name="_csrf" value="{{csrfToken}}">
                     <label>
                         {{#if completed}}
                             <input type="checkbox" checked name="completed">
