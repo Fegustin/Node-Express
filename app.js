@@ -9,12 +9,13 @@ import handlebars from 'express-handlebars'
 import variablesMiddleware from "./middleware/variablesMiddleware.js"
 import todosRoute from "./routes/todosRouter.js"
 import loginRoute from "./routes/authRouter.js"
-import userMiddleware from './middleware/userMiddleware.js';
+import mailRoute from "./routes/mailRouter.js"
+import userMiddleware from './middleware/userMiddleware.js'
+import * as keys from './keys/index.js'
 
 
 const __dirname = path.resolve()
 const PORT = process.env.PORT ?? 3000
-const urlMongoDb = process.env.URLDB ?? 'mongodb+srv://ziotyr:90afudit@cluster0.n8bcm.mongodb.net/todos'
 
 const app = express()
 
@@ -36,15 +37,15 @@ app.use(helmet())
 // Sessions and csrf
 const MongoStore = connectMongo(session);
 app.use(session({
-    secret: 'some body',
+    secret: keys.default.sessionSecret,
     resave: false,
     saveUninitialized: false,
     store: new MongoStore({
         collection: "sessions",
-        url: urlMongoDb
+        url: keys.default.urlMongoDb
     })
 }))
-app.use(csrf())
+app.use(csrf({cookie: false}))
 // ----------
 
 // Middleware
@@ -55,12 +56,12 @@ app.use(userMiddleware)
 // Routers
 app.use(todosRoute)
 app.use(loginRoute)
-
+app.use(mailRoute)
 // ----------
 
 async function start() {
     try {
-        await mongoose.connect(urlMongoDb, {
+        await mongoose.connect(keys.default.urlMongoDb, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
             useFindAndModify: false
