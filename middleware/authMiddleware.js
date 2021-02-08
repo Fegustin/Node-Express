@@ -1,6 +1,4 @@
 export default (req, res, next) => {
-    if (!req.session.isAuthenticated) {
-        return  res.redirect('/login')
-    }
+    if (!req.isAuthenticated()) return res.redirect('/login')
     next()
 }

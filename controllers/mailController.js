@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer'
+import SendMail from "../utils/SendMail.js";
 
 
 export const sendMail = async (req, res) => {
@@ -7,29 +7,14 @@ export const sendMail = async (req, res) => {
 
 export const sendMailPost = async (req, res) => {
     const {email} = req.body
-    console.log(email)
+    const send = new SendMail(
+        email,
+        'sobaka',
+        'Soob',
+        '<p>Nice Dick bro</p>'
+    )
 
-    let transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        secure: true,
-        auth: {
-            user: 'ziotyr1@gmail.com',
-            pass: 'konosuba90',
-        },
-    });
-
-    let msg = {
-        from: '"Fred Foo 👻" <TheFuckerMan@example.com>',
-        to: `${email}`,
-        subject: "Hello ✔",
-        text: "Hello world?",
-        html: "<b>Hello world?</b>",
-    }
-
-    let info = await transporter.sendMail(msg);
-
-    console.log("Message sent: %s", info.messageId);
+    await send.info()
 
     res.send("send mail")
 }

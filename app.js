@@ -3,7 +3,6 @@ import path from 'path'
 import mongoose from 'mongoose'
 import session from 'express-session'
 import connectMongo from 'connect-mongo'
-import csrf from 'csurf'
 import helmet from 'helmet'
 import handlebars from 'express-handlebars'
 import variablesMiddleware from "./middleware/variablesMiddleware.js"
@@ -12,6 +11,8 @@ import loginRoute from "./routes/authRouter.js"
 import mailRoute from "./routes/mailRouter.js"
 import userMiddleware from './middleware/userMiddleware.js'
 import * as keys from './keys/index.js'
+import passport from "passport"
+import flash from 'connect-flash'
 
 
 const __dirname = path.resolve()
@@ -43,9 +44,22 @@ app.use(session({
     store: new MongoStore({
         collection: "sessions",
         url: keys.default.urlMongoDb
-    })
+    }),
+    cookie: {
+        path: '/',
+        httpOnly: true,
+        maxAge: 60 * 60 * 10000
+    }
 }))
-app.use(csrf({cookie: false}))
+// app.use(csrf({cookie: false}))
+// ----------
+
+// Passport js
+import "./config/strategy/configPassword.js"
+
+app.use(passport.initialize())
+app.use(passport.session())
+app.use(flash())
 // ----------
 
 // Middleware
@@ -57,6 +71,7 @@ app.use(userMiddleware)
 app.use(todosRoute)
 app.use(loginRoute)
 app.use(mailRoute)
+
 // ----------
 
 async function start() {
