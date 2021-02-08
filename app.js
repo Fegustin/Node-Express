@@ -36,21 +36,21 @@ app.use(express.urlencoded({extended: true}))
 app.use(helmet())
 
 // Sessions and csrf
-const MongoStore = connectMongo(session);
-app.use(session({
-    secret: keys.default.sessionSecret,
-    resave: false,
-    saveUninitialized: false,
-    store: new MongoStore({
-        collection: "sessions",
-        url: keys.default.urlMongoDb
-    }),
-    cookie: {
-        path: '/',
-        httpOnly: true,
-        maxAge: 60 * 60 * 10000
-    }
-}))
+// const MongoStore = connectMongo(session);
+// app.use(session({
+//     secret: keys.default.sessionSecret,
+//     resave: false,
+//     saveUninitialized: false,
+//     store: new MongoStore({
+//         collection: "sessions",
+//         url: keys.default.urlMongoDb
+//     }),
+//     cookie: {
+//         path: '/',
+//         httpOnly: true,
+//         maxAge: 60 * 60 * 10000
+//     }
+// }))
 // app.use(csrf({cookie: false}))
 // ----------
 
@@ -58,13 +58,13 @@ app.use(session({
 import "./config/strategy/configPassword.js"
 
 app.use(passport.initialize())
-app.use(passport.session())
+// app.use(passport.session())
 app.use(flash())
 // ----------
 
 // Middleware
 app.use(variablesMiddleware)
-app.use(userMiddleware)
+// app.use(userMiddleware)
 // ----------
 
 // Routers
@@ -79,7 +79,8 @@ async function start() {
         await mongoose.connect(keys.default.urlMongoDb, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
-            useFindAndModify: false
+            useFindAndModify: false,
+            useCreateIndex: true
         })
 
         app.listen(PORT)

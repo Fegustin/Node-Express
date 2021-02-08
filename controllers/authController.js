@@ -3,7 +3,7 @@ import crypto from 'crypto'
 import UsersModel from "../models/UsersModel.js"
 import SendMail from "../utils/SendMail.js"
 import keys from '../keys/index.js'
-import passport from 'passport'
+import jwt from 'jsonwebtoken'
 
 export const goToLogin = async (req, res) => {
     res.render('auth/login', {
@@ -13,24 +13,29 @@ export const goToLogin = async (req, res) => {
 }
 
 export const logout = async (req, res) => {
-    req.session.destroy(() => {
-        res.redirect('/login')
+    res.status(200).json({
+        message: "Compliteeee"
     })
 }
 
-export const authenticate = (req, res, next) => {
-    passport.authenticate('local', (err, user, info) => {
-        if (err) return next(err)
-        if (!user) return res.redirect('/login')
-        req.logIn(user, (err) => {
-            if (err) return next(err)
-            req.session.user = user
-            req.session.save(err => {
-                if (err) throw err
-                res.redirect('/')
-            })
-        })
-    })(req, res, next)
+export const authenticate = async (req, res) => {
+    await UsersModel.findOne({email: req.body.email}, async (err, user) => {
+        if (err) return res.redirect('/login')
+        if (user) {
+            if (await bcrypt.compare(req.body.password, user.password)) {
+                const token = jwt.sign({
+                    email: user.email,
+                    userId: user._id
+                }, keys.jwt, {expiresIn: 60 * 60})
+
+                res.status(200).json({
+                    token: `Bearer ${token}`
+                })
+            } else {
+                return res.redirect('/login')
+            }
+        }
+    })
 }
 
 export const registration = async (req, res) => {

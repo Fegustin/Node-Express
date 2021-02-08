@@ -1,5 +1,5 @@
 import {Router} from 'express'
-import auth from '../middleware/authMiddleware.js'
+import passport from 'passport'
 import * as controller from '../controllers/authController.js'
 
 const router = Router()
@@ -10,7 +10,7 @@ router.get('/reset', controller.goToReset)
 
 router.get('/password/:token', controller.goToNewPassword)
 
-router.get('/logout', auth, controller.logout)
+router.get('/logout', passport.authenticate('jwt', {session: false}), controller.logout)
 
 router.post('/login', controller.authenticate)
 

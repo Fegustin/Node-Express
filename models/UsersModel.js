@@ -3,7 +3,8 @@ import pkg from 'mongoose'
 const schema = new pkg.Schema({
     email: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     name: String,
     password: {
