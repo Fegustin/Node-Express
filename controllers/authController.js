@@ -40,7 +40,7 @@ export const authenticate = async (req, res) => {
 
 export const registration = async (req, res) => {
     try {
-        const {email, name, password, repeat} = req.body
+        const {email, name, password, confirm} = req.body
 
         const candidate = await UsersModel.findOne({email})
         if (candidate) {

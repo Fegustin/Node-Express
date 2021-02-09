@@ -3,6 +3,6 @@ export default {
     sessionSecret: process.env.SESSIONSECRET ?? 'some body',
     emailFrom: process.env.EMAIL ?? 'ziotyr1@gmail.com',
     passwordEmailFrom: process.env.EMAILPASS ?? 'konosuba90',
-    baseURL: 'http://localhost:3000',
+    baseURL: process.env.URL ?? 'http://localhost:3000',
     jwt: process.env.JWT ?? 'dev-jwt'
 }

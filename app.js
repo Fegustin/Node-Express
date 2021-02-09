@@ -13,6 +13,11 @@ import userMiddleware from './middleware/userMiddleware.js'
 import * as keys from './keys/index.js'
 import passport from "passport"
 import flash from 'connect-flash'
+import errorHandler from './middleware/error.js'
+import compression from 'compression'
+import {graphqlHTTP} from 'express-graphql'
+import schema from "./graphql/schema.js"
+import resolver from "./graphql/resolver.js"
 
 
 const __dirname = path.resolve()
@@ -32,8 +37,14 @@ app.set('view engine', 'hbs')
 
 app.use(express.static(path.resolve(__dirname, 'public')))
 app.use(express.json())
+app.use(graphqlHTTP({
+    schema,
+    rootValue: resolver,
+    graphiql: true
+}))
 app.use(express.urlencoded({extended: true}))
 app.use(helmet())
+app.use(compression())
 
 // Sessions and csrf
 // const MongoStore = connectMongo(session);
@@ -67,12 +78,21 @@ app.use(variablesMiddleware)
 // app.use(userMiddleware)
 // ----------
 
+// GraphQL
+
+// ----------
+
 // Routers
 app.use(todosRoute)
 app.use(loginRoute)
 app.use(mailRoute)
+// ----------
+
+// Error handler
+app.use(errorHandler)
 
 // ----------
+
 
 async function start() {
     try {
